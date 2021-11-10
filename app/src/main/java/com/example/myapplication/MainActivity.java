@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,12 +20,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CALL_LOG}, PackageManager.PERMISSION_GRANTED);
         textView = findViewById(R.id.textView);
     }
 
-    public void buttonCallLog(View view){
+    public void buttonCallLogOutGoing(View view){
         textView.setText("Call Logging Started ... ");
         String stringOutput = "";
 
@@ -36,11 +40,59 @@ public class MainActivity extends AppCompatActivity {
             String stringDuration = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.DURATION));
             String stringType = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.TYPE));
 
-            stringOutput = stringOutput + "Number: " + stringNumber
-                    + "\nName: " + stringName
-                    + "\nDuration: " + stringDuration
-                    + "\n Type: " + stringType
-                    + "\n\n";
+            if(stringType.endsWith("2")) {
+                stringOutput = stringOutput + "Number: " + stringNumber
+                        + "\nName: " + stringName
+                        + "\nDuration: " + stringDuration
+                        + "\n Type: " + stringType
+                        + "\n\n";
+            }
+        }while (cursorCallLogs.moveToNext());
+        textView.setText(stringOutput);
+    }
+    public void buttonCallLogInComing(View view){
+        textView.setText("Call Logging Started ... ");
+        String stringOutput = "";
+
+        Uri uriCallLogs = Uri.parse("content://call_log/calls");
+        Cursor cursorCallLogs = getContentResolver().query(uriCallLogs, null,null,null);
+        cursorCallLogs.moveToFirst();
+        do {
+            String stringNumber = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.NUMBER));
+            String stringName = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.CACHED_NAME));
+            String stringDuration = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.DURATION));
+            String stringType = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.TYPE));
+
+            if(stringType.endsWith("1")) {
+                stringOutput = stringOutput + "Number: " + stringNumber
+                        + "\nName: " + stringName
+                        + "\nDuration: " + stringDuration
+                        + "\n Type: " + stringType
+                        + "\n\n";
+            }
+        }while (cursorCallLogs.moveToNext());
+        textView.setText(stringOutput);
+    }
+    public void buttonCallLogMissed(View view){
+        textView.setText("Call Logging Started ... ");
+        String stringOutput = "";
+
+        Uri uriCallLogs = Uri.parse("content://call_log/calls");
+        Cursor cursorCallLogs = getContentResolver().query(uriCallLogs, null,null,null);
+        cursorCallLogs.moveToFirst();
+        do {
+            String stringNumber = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.NUMBER));
+            String stringName = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.CACHED_NAME));
+            String stringDuration = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.DURATION));
+            String stringType = cursorCallLogs.getString(cursorCallLogs.getColumnIndex(CallLog.Calls.TYPE));
+
+            if(stringType.endsWith("3")) {
+                stringOutput = stringOutput + "Number: " + stringNumber
+                        + "\nName: " + stringName
+                        + "\nDuration: " + stringDuration
+                        + "\n Type: " + stringType
+                        + "\n\n";
+            }
         }while (cursorCallLogs.moveToNext());
         textView.setText(stringOutput);
     }
