@@ -12,6 +12,7 @@ import android.provider.CallLog;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +49,14 @@ public class MainActivity extends AppCompatActivity {
                         + "\n\n";
             }
         }while (cursorCallLogs.moveToNext());
-        textView.setText(stringOutput);
+        LinearLayout linearLayout = new LinearLayout(this);
+        setContentView(linearLayout);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+            TextView textView = new TextView(this);
+            textView.setText(stringOutput);
+            linearLayout.addView(textView);
+
+
     }
     public void buttonCallLogInComing(View view){
         textView.setText("Call Logging Started ... ");
